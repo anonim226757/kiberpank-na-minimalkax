@@ -73,4 +73,32 @@ def  load_sprite_rect(
                 if colorkey = image.get_at((0,0))
                 image.set_colorkey(colorkey, RLEACCEL)
 
-            if scalex != -1 or scaley != -1
+            if scalex != -1 or scaley != -1:
+                imge = pygame.transform.scale(image,(scalex, scaley))
+
+            sprites.append (image)
+
+        sprite_rect = sprintes[0].get_rect
+
+    def disp_gameOver_msg(retbuton_image,gameover_image):
+       retbutton_rect = retbuton_image.get_rect()
+       retbutton_rect.ceterx = width / 2
+       retbutton_rect.top = height*0.52
+
+       gameover_rect = gaameover_image.get_rect()
+       gameover_rect.centex = width / 2
+       gameover_rect.centex = height*0.35
+
+       screen.blit(retbutton_imaage,retbutton_rect)
+       screen.blit(gaameover_image, gameover_rect)
+
+    def extractDigits(number):
+        if number > -1:
+            digits = []
+            1 = 0
+            while(number/10 != 0)
+            digits.append(number%10)
+            number = int(number/10)
+
+        digits.append(number%10)
+        

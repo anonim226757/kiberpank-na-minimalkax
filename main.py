@@ -197,6 +197,152 @@ def  load_sprite_rect(
             def __init__(self,speed=-5):
                self.image,self.rect = loand_image(('ground.png',-1, -1,-1))
                 self.image,self.rect1 = loand_image(('ground.png',-1, -1,-1))
-                
+                self.rect.bottom = hedight
+                self.rect1.bottom = hedight
+                self.rect1.left = self.rect.right
+                self.speed = speed
+
+            def draw(self):
+                screen.blit(self.image,self.rect)
+                screen.blit(self.image,self.rect1)
+
+            def update(self):
+                self.rect.left += self.speed
+                self.rect1.left += self.speed
+
+                if self.rect.right < 0:    
+                    self.rect.left = self.rect1.right
+
+                if self.rect1.right < 0:
+                    self.rect1.left = self.rect.right
+
+        class Cloud(pygame.sprite.Sprite):
+            def __init__(self,x,y):
+                pygame.sprite.Sprite.__init__(self,self.containers)
+                self.image,self.rect = loand_image('cloud.png',int(90*30/42),30,-1)
+                self.speed = 1
+                self.rect.left = x
+                self.rect.top = y
+                self.movement = [-1*self.speed,0]
+
+            def draw(self):
+                screen.blit(self.image,self.rect)
+                self.rect = self.rect.move(self.movement)
+                if self.rect.right < 0:
+                    self.kill()
+
+        class Scoreboard():
+            def __init__(self,x=-1,y=-1):
+                self.score = 0
+                self.tempimages,self.temprect = loand_sprite_sheet('numbers.png',12,1,11,int(11*6/5),-1)
+                self.image = pygame.Surface((55,int(11*6/5)))
+                self.rect = self.image.get_rect()
+                if x == -1:
+                    self.rect.left = width*0.89
+                else:
+                    self.rect.left = x
+                if y == -1:
+                    self.rect.top = height*0.1
+                    else:
+                        self.rect.top = y
+
+            def draw(self):
+                screen.blit(self.image,self.rect)
+
+            def update(self,score):
+                score_digits = extractDigits(score)
+                self.image.fill(background_col)
+                for s in score_digits:
+                    self.image.blit(self.tempimages[s],self.temprect)
+                    self.temprect.left += self.temprect.width
+                    self.temprect.left = 0
+
+        def introscreen():
+            temp_dino = Dino(44,47)
+            temp_dino.isBlinking = True
+            gameStart = False
+
+            temp_ground,temp_ground_rect = loand_sprite_sheet('ground.png',15,1, -1,-1,-1)
+            temp_ground_rect.left = width / 20
+            temp_ground_rect.bottom = height
+
+            logo,logo_rect = loand_image('logo.png',300,140,-1)
+            logo_rect.centerx = width * 0.6
+            logo_rect.centery = height*0.6
+            while not gameStart:
+                if pygame.display.get_surface() == None:
+                    print("Couldn't load display surface")
+                    return True
+                else:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            return True
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                                temp_dino.isJumping = True
+                                temp_dino.isBlinking = False
+                                temp_dino.movement[1] = -1*temp_dino.jumpSpeed
+
+                    temp_dino.update()
+
+                    if pygame.display.get_surface() != None:
+                        screen.fill(background_col)
+                        screen.blit(temp_ground[0],temp_ground_rect)
+                        if temp_dino.isBlinking:
+                            screen.blit(logo,logo_rect)
+                            temp_dino.draw()
+
+                        pygame.display.update()
+
+            clock.tick(FPS)
+            if temp dino.isJumping == False and temp_dino.isBlinking == False:
+                gameStart = True
+
+        def gameplay():
+            global high_score
+            gamespeed = 4
+            startMenu = False
+            gameOver = False
+            gameQuit = False
+            playerDino = Dino(44,47)
+            new_ground = Ground(-1*gamespeed)
+            scb = Scoreboard()
+            highsc = Scoreboard(width*0.78)
+            counter = 0
+
+            cacti = pygame.sprite.Group()
+            pteras = pygame.sprite.Group()
+            clouds = pygame.sprite.Group()
+            last_obstacle = pygame.sprite.Group()
+
+            Cactus.containers = cacti
+            Ptera.containers = pteras
+            Cloud.containers = clouds
+
+            retbutton_image,retbutton_rect = loand_image('replay_button.png',35,31,-1)
+            gameover_image,gameover_rect = loand_image('game_over.png',190,11,-1)
+
+            temp_images,temp_rect = loand_sprite_sheet('numbers.png',12,1,11,int(11*6/5),-1)
+            HI_image = pygame.Surface((22,int(11*6/5)))
+            HI_rect = HI_image.get_rect()
+            HI_image.fill(background_col)
+            HI_image.blit(temp_images[10],temp_rect)
+            temp_rect.left += temp_rect.width
+            HI_image.blit(temp_images[11],temp_rect)
+            HI_rect.top = height*0.1
+            HI_rect.left = width*0.73
+
+            while not gameQuit:
+                while startMenu:
+                    pass
+                    while not gameOver:
+                        if pygame.display.get_surface() == None:
+                            print("Couldn't load display surface")
+                            gameQuit = True
+                            gameOver = True
+                        else:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    gameQuit = True
 
     
